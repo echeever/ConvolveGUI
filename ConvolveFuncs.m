@@ -1,10 +1,8 @@
 function ConvolveFuncs
-% cFunc = struct(());
-
-cFunc(1).f='U(t)';        % Function to be executed
-cFunc(end).d=[];          % Impulse nx2 (time, height) (see examples below)   
-cFunc(end).n='Unit Step'; % String for drop down menu
-cFunc(end).s='$\gamma(t)$';          % TeX string to be displayed.
+cFunc(1).f='U(t)';          % Function to be executed
+cFunc(end).d=[];            % Impulse nx2 (time, height) (see examples below)   
+cFunc(end).n='Unit Step';   % String for drop down menu
+cFunc(end).s='$\gamma(t)$'; % TeX string to be displayed.
 
 
 cFunc(end+1).f='U(t)-U(t-2)';
@@ -56,8 +54,6 @@ cFunc(end+1).f='U(t) - 2*U(t-1) + U(t-2)';
 cFunc(end).n='BiPhasic (2 sec)';
 cFunc(end).d=[];
 cFunc(end).s='$\gamma(t) - 2\gamma(t-1) + \gamma(t-2)$';
-
-
 
 cFunc(end+1).f='U(t).*exp(-t/2)/2';
 cFunc(end).n='Exponential, slow';
@@ -119,10 +115,6 @@ cFunc(end+1).f='sin(5*t)./t/5';
 cFunc(end).n='Wide Sinc';
 cFunc(end).d=[];
 cFunc(end).s='$\frac{sin(5t)}{5t}$';
-
-
-
-
 
 
 %% The following lines are useful for debugging.

@@ -75,15 +75,18 @@ handles.hPopup.Value=2;
 
 %These variables are passed back and forth to "ConvolveAnimParam"
 %to control animation parameters (2 per line to save space)
-handles.fileName='ConvolvAnim';	handles.filePath=cd;
-handles.editNumFrames=20;		handles.checkSaveFile=0;
-handles.animFileType=1;			handles.checkShowLegend=0;
-handles.editFPS=5;				handles.showLegend=1;
+handles.fileName='ConvolvAnim.mat';     handles.filePath=cd;
+handles.editNumFrames=20;               handles.checkSaveFile=0;
+handles.animFileType=1;                 handles.checkShowLegend=0;
+handles.editFPS=5;                      handles.showLegend=1;
+handles.videoQ = 75;
 
 handles.tmin=0; handles.tmax=0;	handles.dt=0; 	handles.t=0;
-handles.f=0; 	handles.h=0;	handles.y=0;    
-handles.fd=0;
-handles.hd=0;
+handles.f=0; 	handles.h=0;    % functions	
+handles.fd=0;   handles.hd=0;   % impulses in functions.
+handles.y=0;                    % convolution values in array
+
+
 
 axes(handles.hAxText);  axis off;   cla
 handles.hDispText = text(0,0.5,'.','HorizontalAlignment','left',...
@@ -289,7 +292,7 @@ ymin=min(y); %Set y axes to be slightly bigger than the functions.
 ymax=max(y);
 ylower=ymin-0.05*(ymax-ymin);
 yupper=ymax+0.05*(ymax-ymin);
-handles.convolutionAxes.YLim=[ylower yupper+1];  %xxxxxxxxxxx
+handles.convolutionAxes.YLim=[ylower yupper];
 handles.convolutionAxes.XLim=[tmin tmax];
 xlabel('Time');
 title('Convolution, f(t)*h*t)');
@@ -361,14 +364,15 @@ end
 
 % --- Executes on button press in AnimParamButton.
 function AnimParamButton_Callback(~, ~, handles)
-[v1, v2, v3, v4, v5, v6, v7]=ConvolveAnimParam(...
+[v1, v2, v3, v4, v5, v6, v7, v8]=ConvolveAnimParam(...
     handles.fileName,...
     handles.filePath,...
     handles.editNumFrames,...
     handles.checkSaveFile,...
     handles.animFileType,...
     handles.checkShowLegend,...
-    handles.editFPS);
+    handles.editFPS,...
+    handles.videoQ);
 handles.fileName=v1;
 handles.filePath=v2;
 handles.editNumFrames=v3;
@@ -376,6 +380,7 @@ handles.checkSaveFile=v4;
 handles.animFileType=v5;
 handles.checkShowLegend=v6;
 handles.editFPS=v7;
+handles.videoQ=v8;
 guidata(handles.ConvolveGUI_fig, handles);
 
 
@@ -385,7 +390,9 @@ tmin=str2double(handles.TminText.String);
 tmax=str2double(handles.TmaxText.String);
 dt=(tmax-tmin)/(handles.editNumFrames-1);
 t=tmin:dt:tmax;
-myMovie=ones(1,length(t));
+% myMovie=ones(1,length(t));
+numFrms = length(t);
+myMovie(numFrms) = struct('cdata',[],'colormap',[]);
 for i=1:length(t),
     if ((i==1) || (i==length(t))),
         handles.showLegend=1;
@@ -398,7 +405,7 @@ for i=1:length(t),
     if (handles.checkSaveFile==1),
         myMovie(i)=getframe(handles.ConvolveGUI_fig);
     end
-    pause(1/handles.editFPS);    %Put pause in to allow execution to be interrupted by ctrl-C.
+    pause(1/handles.editFPS);    % Pause allows termination with ctrl-C.
 end
 
 if (handles.checkSaveFile==1),
@@ -410,15 +417,21 @@ if (handles.checkSaveFile==1),
     switch (handles.animFileType),
         case {1}
             save(myFname,'myMovie');
-        case {2}
-            movie2avi(myMovie,myFname,...
-                'compression','Cinepak',...
-                'quality',90,...
-                'fps',handles.editFPS);
-        case {3}
-            movie2avi(myMovie,myFname,...
-                'compression','None',...
-                'fps',handles.editFPS);
+        case {2, 3}
+            if strcmp(myFname(end-3:end),'.avi'),
+                wObj = VideoWriter(myFname);            % .avi by default
+            else
+                 wObj = VideoWriter(myFname,'MPEG-4');  % change to .mp4
+            end
+            wObj.FrameRate = handles.editFPS;
+            wObj.Quality = handles.videoQ;
+
+            open(wObj);
+            for frmNum=1:numFrms,
+                waitbar(numFrms/frmNum,h,'writing');
+                writeVideo(wObj,myMovie(frmNum));
+            end
+            close(wObj);
         otherwise
             save(myFname,'myMovie');
     end

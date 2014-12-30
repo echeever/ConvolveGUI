@@ -18,6 +18,10 @@ $RECYCLE.BIN/
 Copy_*.*
 *.asv
 
+# videos
+*.mp4
+*.avi
+
 # =========================
 # Operating System Files
 # =========================

@@ -22,7 +22,7 @@ function varargout = ConvolveAnimParam(varargin)
 
 % Edit the above text to modify the response to help ConvolveAnimParam
 
-% Last Modified by GUIDE v2.5 24-Dec-2014 09:56:26
+% Last Modified by GUIDE v2.5 30-Dec-2014 12:14:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -46,80 +46,97 @@ end
 
 % --- Executes just before ConvolveAnimParam is made visible.
 function ConvolveAnimParam_OpeningFcn(hObject, ~, handles, varargin)
-handles.output = hObject;    
-if (length(varargin)~=7),
+handles.output = hObject;
+if (length(varargin)~=8),
     beep;
     disp('Wrong number of input arguments to ConvolveAnimParam');
     uiresume
 else
-    set(handles.textFileName,'String',varargin{1});
+    handles.textFileName.String=varargin{1};
     handles.filePath=varargin{2};
-    set(handles.editNumFrames,'String',num2str(varargin{3}));
-    set(handles.checkSaveFile,'Value',varargin{4});
+    handles.editNumFrames.String=num2str(varargin{3});
+    handles.checkSaveFile.Value=varargin{4};
     movieType=varargin{5};
     switch (movieType),
         case {1}
-            set(handles.radioMatLabMovie,'Value',1);
-            set(handles.radioAviComp,'Value',0);
-            set(handles.radioAviNotComp,'Value',0);
+            handles.radioMatLabMovie.Value=1;
+            handles.radioAvi.Value=0;
+            handles.radioMp4.Value=0;
         case {2}
-            set(handles.radioMatLabMovie,'Value',0);
-            set(handles.radioAviComp,'Value',1);
-            set(handles.radioAviNotComp,'Value',0);
+            handles.radioMatLabMovie.Value=0;
+            handles.radioAvi.Value=1;
+            handles.radioMp4.Value=0;
         case {3}
-            set(handles.radioMatLabMovie,'Value',0);
-            set(handles.radioAviComp,'Value',0);
-            set(handles.radioAviNotComp,'Value',1);
+            handles.radioMatLabMovie.Value=0;
+            handles.radioAvi.Value=0;
+            handles.radioMp4.Value=1;
         otherwise
-            set(handles.radioMatLabMovie,'Value',1);
-            set(handles.radioAviComp,'Value',0);
-            set(handles.radioAviNotComp,'Value',0);
+            handles.radioMatLabMovie.Value=1;
+            handles.radioAvi.Value=0;
+            handles.radioMp4.Value=0;
     end
     
-    set(handles.checkShowLegend,'Value',varargin{6});
-    set(handles.editFPS,'String',num2str(varargin{7}));
+    handles.checkShowLegend.Value=varargin{6};
+    handles.editFPS.String=num2str(varargin{7});
+    handles.editVideoQ.String=num2str(varargin{8});
 end
 
 guidata(hObject, handles);  % Update handles structure
 % UIWAIT makes ConvolveAnimParam wait for user response (see UIRESUME)
 uiwait(handles.ConvolveAnimParamDlg);
- 
+
 
 % --- Outputs from this function are returned to the command line.
 function varargout = ConvolveAnimParam_OutputFcn(~, ~, handles)
-myFName=get(handles.textFileName,'String');
+% myFName=handles.textFileName.String;
 varargout{2}=handles.filePath;
-varargout{3}=str2double(get(handles.editNumFrames,'String'));
-varargout{4}=get(handles.checkSaveFile,'Value');
-if (get(handles.radioMatLabMovie,'Value')==1),
+varargout{3}=str2double(handles.editNumFrames.String);
+varargout{4}=handles.checkSaveFile.Value;
+if (handles.radioMatLabMovie.Value==1),
     movieType=1;
-elseif (get(handles.radioAviComp,'Value')==1),
+elseif (handles.radioAvi.Value==1),
     movieType=2;
-elseif (get(handles.radioAviNotComp,'Value')==1),
+elseif (handles.radioMp4.Value==1),
     movieType=3;
 else
     beep;
-    disp('Warning 1, unknown file type, ConvolveAnimParam_OutputFcn');
+    disp('Warning: unknown file type, ConvolveAnimParam_OutputFcn');
     movieType=1;
 end
 varargout{5}=movieType;
-varargout{6}=get(handles.checkShowLegend,'Value');
-varargout{7}=str2double(get(handles.editFPS,'String'));
+varargout{6}=handles.checkShowLegend.Value;
+varargout{7}=str2double(handles.editFPS.String);
+varargout{8}=str2double(handles.editVideoQ.String);
 
-[~, ~, ext] = fileparts(myFName);
-if (strcmp(ext,'')),
-    switch movieType,
-        case {1}
-            myFName=[myFName '.mat'];
-        case {2, 3}
-            myFName=[myFName '.avi'];
-        otherwise
-            beep;
-            disp('Warning 2, unknown file type, ConvolveAnimParam_OutputFcn');
-           % movieType=1;
-    end
-end
-varargout{1}=myFName;
+%[pNm, fNm, ~] = fileparts(myFName);
+% if (strcmp(ext,'')),
+%     switch movieType,
+%         case 1
+%             myFName = fullfile(pNm, fNm, [fNm '.mat']);
+%         case 2
+%             myFName = fullfile(pNm, fNm, [fNm '.avi']);
+%         case 3
+%             myFName = fullfile(pNm, fNm, [fNm '.mp4']);
+%         otherwise
+%             beep;
+%             disp('Warning 2, unknown file type, ConvolveAnimParam_OutputFcn');
+%             % movieType=1;
+%     end
+% end
+%     switch movieType,
+%         case 1
+%             ext='.mat';
+%         case 2
+%             ext='.avi';
+%         case 3
+%             ext='.mp4';
+%         otherwise
+%             beep;
+%             disp('Warning 2, unknown file type, ConvolveAnimParam_OutputFcn');
+%             ext = '.junk'
+%     end
+
+varargout{1}=handles.textFileName.String;
 
 delete(handles.ConvolveAnimParamDlg);
 
@@ -128,70 +145,93 @@ function editNumFrames_Callback(~, ~, ~) %#ok<*DEFNU>
 
 function editFPS_Callback(~, ~, ~)
 
-% --- Executes on button press in checkShowLegend.
 function checkShowLegend_Callback(~, ~, ~)
 
-% --- Executes on button press in checkSaveFile.
 function checkSaveFile_Callback(~, ~, ~)
 
-% --- Executes on button press in pushDone.
-function pushDone_Callback(~, ~, ~)  
+function pushDone_Callback(~, ~, ~)
 uiresume;
 
-% --- Executes when user attempts to close ConvolveAnimParamDlg.
 function ConvolveAnimParamDlg_CloseRequestFcn(hObject, ~, ~)
 delete(hObject);
 
-
-% --- Executes during object creation, after setting all properties.
 function editNumFrames_CreateFcn(hObject, ~, ~)
-if ispc
-    set(hObject,'BackgroundColor','white');
-else
-    set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
+if ispc && isequal(hObject.BackgroundColor,...
+ get(0,'defaultUicontrolBackgroundColor'))
+    hObject.BackgroundColor='white';
 end
-
 
 function editFPS_CreateFcn(hObject, ~, ~)
-if ispc
-    set(hObject,'BackgroundColor','white');
-else
-    set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
+if ispc && isequal(hObject.BackgroundColor,...
+ get(0,'defaultUicontrolBackgroundColor'))
+    hObject.BackgroundColor='white';
 end
 
+function editVideoQ_CreateFcn(hObject, ~, ~)
+if ispc && isequal(hObject.BackgroundColor,...
+ get(0,'defaultUicontrolBackgroundColor'))
+    hObject.BackgroundColor='white';
+end
 
 % --- Executes on button press in radioMatLabMovie.
 function radioMatLabMovie_Callback(~, ~, handles)
-set(handles.radioMatLabMovie,'Value',1);
-set(handles.radioAviComp,'Value',0);
-set(handles.radioAviNotComp,'Value',0);
+handles.radioMatLabMovie.Value=1;
+handles.radioAvi.Value=0;
+handles.radioMp4.Value=0;
+myFName=handles.textFileName.String;
+[pNm, fNm, ~] = fileparts(myFName);   % Strip off extension
+handles.textFileName.String=fullfile(pNm, [fNm '.mat']);
 
-% --- Executes on button press in radioAviComp.
-function radioAviComp_Callback(~, ~, handles)
-set(handles.radioAviComp,'Value',1);
-set(handles.radioMatLabMovie,'Value',0);
-set(handles.radioAviNotComp,'Value',0);
+% --- Executes on button press in radioAvi.
+function radioAvi_Callback(~, ~, handles)
+handles.radioAvi.Value=1;
+handles.radioMatLabMovie.Value=0;
+handles.radioMp4.Value=0;
+myFName=handles.textFileName.String;
+[pNm, fNm, ~] = fileparts(myFName);   % Strip off extension
+handles.textFileName.String=fullfile(pNm, [fNm '.avi']);
 
-% --- Executes on button press in radioAviNotComp.
-function radioAviNotComp_Callback(~, ~, handles)
-set(handles.radioAviNotComp,'Value',1);
-set(handles.radioMatLabMovie,'Value',0);
-set(handles.radioAviComp,'Value',0);
-
+% --- Executes on button press in radioMp4.
+function radioMp4_Callback(~, ~, handles)
+handles.radioMp4.Value=1;
+handles.radioMatLabMovie.Value=0;
+handles.radioAvi.Value=0;
+myFName=handles.textFileName.String;
+[pNm, fNm, ~] = fileparts(myFName);   % Strip off extension
+handles.textFileName.String=fullfile(pNm, [fNm '.mp4']);
 
 % --- Executes on button press in pushFileName.
 function pushFileName_Callback(~, ~, handles)
-if (get(handles.radioMatLabMovie,'Value')==1),
+if handles.radioMatLabMovie.Value==1,
     [fileName, pathName]=uiputfile('*.mat','Save Matlab Movie as .mat file');
-elseif ((get(handles.radioAviComp,'Value')==1) || ...
-        (get(handles.radioAviNotComp,'Value')==1)),
-        [fileName, pathName]=uiputfile('*.avi','Save Matlab Movie as .avi file');
+elseif handles.radioAvi.Value==1,
+    [fileName, pathName]=uiputfile('*.avi','Save Matlab Movie as .avi file');
+elseif handles.radioMp4.Value==1,
+    [fileName, pathName]=uiputfile('*.mp4','Save Matlab Movie as .mp4 file');
 else
     errordlg('Unknown file type, ConvolveAnimParam, pushFileName_Callback');
 end
 if (fileName~=0),
-    set(handles.textFileName,'String',fileName);
+    handles.textFileName.String=fileName;
     handles.filePath=pathName;
 end
 guidata(handles.ConvolveAnimParamDlg, handles);
+
+
+
+function editVideoQ_Callback(hObject, ~, handles)
+try
+    Q = round(str2double(hObject.String));
+catch
+    Q=75;
+end
+if Q>100, 
+    Q=100;
+elseif Q<50, 
+    Q=50;
+end
+hObject.String = num2str(Q);
+handles.videoQ = Q;
+guidata(handles.ConvolveAnimParamDlg, handles);
+
 
