@@ -22,7 +22,7 @@ function varargout = ConvolveAnimParam(varargin)
 
 % Edit the above text to modify the response to help ConvolveAnimParam
 
-% Last Modified by GUIDE v2.5 23-Dec-2003 14:18:51
+% Last Modified by GUIDE v2.5 24-Dec-2014 09:56:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -32,7 +32,7 @@ gui_State = struct('gui_Name',       mfilename, ...
     'gui_OutputFcn',  @ConvolveAnimParam_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
-if nargin & isstr(varargin{1})
+if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -45,14 +45,7 @@ end
 
 
 % --- Executes just before ConvolveAnimParam is made visible.
-function ConvolveAnimParam_OpeningFcn(hObject, eventdata, handles, varargin)
-% This function has no output args, see OutputFcn.
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to ConvolveAnimParam (see VARARGIN)
-
-% Choose default command line output for ConvolveAnimParam
+function ConvolveAnimParam_OpeningFcn(hObject, ~, handles, varargin)
 handles.output = hObject;    
 if (length(varargin)~=7),
     beep;
@@ -86,21 +79,17 @@ else
     set(handles.checkShowLegend,'Value',varargin{6});
     set(handles.editFPS,'String',num2str(varargin{7}));
 end
-% Update handles structure
-guidata(hObject, handles);
+
+guidata(hObject, handles);  % Update handles structure
 % UIWAIT makes ConvolveAnimParam wait for user response (see UIRESUME)
 uiwait(handles.ConvolveAnimParamDlg);
  
 
 % --- Outputs from this function are returned to the command line.
-function varargout = ConvolveAnimParam_OutputFcn(hObject, eventdata, handles)
-% varargout  cell array for returning output args (see VARARGOUT);
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function varargout = ConvolveAnimParam_OutputFcn(~, ~, handles)
 myFName=get(handles.textFileName,'String');
 varargout{2}=handles.filePath;
-varargout{3}=str2num(get(handles.editNumFrames,'String'));
+varargout{3}=str2double(get(handles.editNumFrames,'String'));
 varargout{4}=get(handles.checkSaveFile,'Value');
 if (get(handles.radioMatLabMovie,'Value')==1),
     movieType=1;
@@ -115,9 +104,9 @@ else
 end
 varargout{5}=movieType;
 varargout{6}=get(handles.checkShowLegend,'Value');
-varargout{7}=str2num(get(handles.editFPS,'String'));
+varargout{7}=str2double(get(handles.editFPS,'String'));
 
-[pathstr name ext versn] = fileparts(myFName);
+[~, ~, ext] = fileparts(myFName);
 if (strcmp(ext,'')),
     switch movieType,
         case {1}
@@ -127,7 +116,7 @@ if (strcmp(ext,'')),
         otherwise
             beep;
             disp('Warning 2, unknown file type, ConvolveAnimParam_OutputFcn');
-            movieType=1;
+           % movieType=1;
     end
 end
 varargout{1}=myFName;
@@ -135,102 +124,68 @@ varargout{1}=myFName;
 delete(handles.ConvolveAnimParamDlg);
 
 
+function editNumFrames_Callback(~, ~, ~) %#ok<*DEFNU>
 
-% --- Executes on button press in pushDone.
-function pushDone_Callback(hObject, eventdata, handles)
-% hObject    handle to pushDone (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-uiresume;
-
-% --- Executes during object creation, after setting all properties.
-function editNumFrames_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to editNumFrames (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc
-    set(hObject,'BackgroundColor','white');
-else
-    set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
-end
-
-function editNumFrames_Callback(hObject, eventdata, handles)
-% hObject    handle to editNumFrames (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% --- Executes during object creation, after setting all properties.
-
-function editFPS_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to editFPS (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc
-    set(hObject,'BackgroundColor','white');
-else
-    set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
-end
-
-function editFPS_Callback(hObject, eventdata, handles)
-% hObject    handle to editFPS (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function editFPS_Callback(~, ~, ~)
 
 % --- Executes on button press in checkShowLegend.
-function checkShowLegend_Callback(hObject, eventdata, handles)
-% hObject    handle to checkShowLegend (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function checkShowLegend_Callback(~, ~, ~)
 
 % --- Executes on button press in checkSaveFile.
-function checkSaveFile_Callback(hObject, eventdata, handles)
-% hObject    handle to checkSaveFile (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function checkSaveFile_Callback(~, ~, ~)
+
+% --- Executes on button press in pushDone.
+function pushDone_Callback(~, ~, ~)  
+uiresume;
+
+% --- Executes when user attempts to close ConvolveAnimParamDlg.
+function ConvolveAnimParamDlg_CloseRequestFcn(hObject, ~, ~)
+delete(hObject);
+
+
+% --- Executes during object creation, after setting all properties.
+function editNumFrames_CreateFcn(hObject, ~, ~)
+if ispc
+    set(hObject,'BackgroundColor','white');
+else
+    set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
+end
+
+
+function editFPS_CreateFcn(hObject, ~, ~)
+if ispc
+    set(hObject,'BackgroundColor','white');
+else
+    set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
+end
+
 
 % --- Executes on button press in radioMatLabMovie.
-function radioMatLabMovie_Callback(hObject, eventdata, handles)
-% hObject    handle to radioMatLabMovie (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function radioMatLabMovie_Callback(~, ~, handles)
 set(handles.radioMatLabMovie,'Value',1);
 set(handles.radioAviComp,'Value',0);
 set(handles.radioAviNotComp,'Value',0);
 
 % --- Executes on button press in radioAviComp.
-function radioAviComp_Callback(hObject, eventdata, handles)
-% hObject    handle to radioAviComp (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function radioAviComp_Callback(~, ~, handles)
 set(handles.radioAviComp,'Value',1);
 set(handles.radioMatLabMovie,'Value',0);
 set(handles.radioAviNotComp,'Value',0);
 
 % --- Executes on button press in radioAviNotComp.
-function radioAviNotComp_Callback(hObject, eventdata, handles)
-% hObject    handle to radioAviNotComp (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function radioAviNotComp_Callback(~, ~, handles)
 set(handles.radioAviNotComp,'Value',1);
 set(handles.radioMatLabMovie,'Value',0);
 set(handles.radioAviComp,'Value',0);
 
 
 % --- Executes on button press in pushFileName.
-function pushFileName_Callback(hObject, eventdata, handles)
-% hObject    handle to pushFileName (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function pushFileName_Callback(~, ~, handles)
 if (get(handles.radioMatLabMovie,'Value')==1),
-    [fileName pathName]=uiputfile('*.mat','Save Matlab Movie as .mat file');
-elseif ((get(handles.radioAviComp,'Value')==1) | ...
+    [fileName, pathName]=uiputfile('*.mat','Save Matlab Movie as .mat file');
+elseif ((get(handles.radioAviComp,'Value')==1) || ...
         (get(handles.radioAviNotComp,'Value')==1)),
-        [fileName pathName]=uiputfile('*.avi','Save Matlab Movie as .avi file');
+        [fileName, pathName]=uiputfile('*.avi','Save Matlab Movie as .avi file');
 else
     errordlg('Unknown file type, ConvolveAnimParam, pushFileName_Callback');
 end
@@ -239,7 +194,4 @@ if (fileName~=0),
     handles.filePath=pathName;
 end
 guidata(handles.ConvolveAnimParamDlg, handles);
-
-
-
 

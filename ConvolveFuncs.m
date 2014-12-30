@@ -1,82 +1,137 @@
 function ConvolveFuncs
+% cFunc = struct(());
 
-s='U(t)';
-d='Unit Step';
-cFuncStep={s d};
+cFunc(1).f='U(t)';        % Function to be executed
+cFunc(end).d=[];          % Impulse nx2 (time, height) (see examples below)   
+cFunc(end).n='Unit Step'; % String for drop down menu
+cFunc(end).s='$\gamma(t)$';          % TeX string to be displayed.
 
-s='U(t)-U(t-2)';
-d='Pulse (2 sec)';
-cFuncPulse2={s d};
 
-s='2*(U(t)-U(t-1))';
-d='Pulse (amp=2, 1 sec)';
-cFuncPulseDouble={s d};
+cFunc(end+1).f='U(t)-U(t-2)';
+cFunc(end).n='Pulse (2 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t)-\gamma(t-2)$';
 
-s='0.5*(U(t)-U(t-2))';
-d='Pulse (amp=0.5, 2 sec)';
-cFuncPulseHalf={s d};
+cFunc(end+1).f='2*(U(t)-U(t-1))';
+cFunc(end).n='Pulse (amp=2, 1 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$2(\gamma(t)-\gamma(t-1))$';
 
-s='(U(t)-U(t-0.2))';
-d='Pulse (amp=1, 0.2 sec)';
-cFuncNarrow={s d};
+cFunc(end+1).f='0.*U(t)';  % Must be function of t so it is not zero length
+cFunc(end).n='Impulse pulse (h=2, w=1)';  % Approximation to pulse
+cFunc(end).d=[0.4 0; 0.4 0.2; 0.4 0.4; 0.4 0.6; 0.4 0.8;]; % dwindling impulses
+cFunc(end).s='$0.4(\delta(t)-\delta(t-0.2)-\delta(t-0.4)-\delta(t-0.6)-\delta(t-0.8))$';
 
-s='t.*(U(t)-U(t-1))';
-d='Ramp (1 sec)';
-cFuncRamp1={s d};
+cFunc(end+1).f='0.5*(U(t)-U(t-2))';
+cFunc(end).n='Pulse (amp=0.5, 2 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$\frac{\gamma(t)-\gamma(t-2)}{2}$';
 
-s='(1-t).*U(t)+(t-1).*U(t-1)';
-d='Inverse Ramp (1 sec)';
-cFuncRamp2={s d};
+cFunc(end+1).f='(U(t)-U(t-0.2))';
+cFunc(end).n='Pulse (amp=1, 0.2 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t)-\gamma(t-0.2)$';
 
-s='t.*U(t) - (2*t-2).*U(t-1) + (t-2).*U(t-2)';
-d='Triangle (2 sec)';
-cFuncTriangle={s d};
+cFunc(end+1).f='U(t)-U(t-1)';
+cFunc(end).n='Pulse (amp=1, 1 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t)-\gamma(t-1)$';
 
-s='U(t) - 2*U(t-1) + U(t-2)';
-d='BiPhasic (2 sec)';
-cFuncBiphasic={s d};
+cFunc(end+1).f='t.*(U(t)-U(t-1))';
+cFunc(end).n='Ramp (1 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$t(\gamma(t)-\gamma(t-1))$';
 
-s='U(t).*exp(-0.5.*t).*sin(sqrt(3/4)*t)/sqrt(3/4)';
-d='Damped Sinusoid';
-cFuncDampedSine={s d};
+cFunc(end+1).f='(1-t).*(U(t)-U(t-1))';
+cFunc(end).n='Inverse Ramp (1 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$(1-t)(\gamma(t)-\gamma(t-1))$';
 
-s='U(t).*(sin(t).*t+1).*U(4-t)';
-d='Oddball function';
-cFuncOddBall={s d};
+cFunc(end+1).f='t.*U(t) - (2*t-2).*U(t-1) + (t-2).*U(t-2)';
+cFunc(end).n='Triangle (2 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$t\gamma(t) - 2(t-1)\gamma(t-1) + (t-2)\gamma(t-2)$';
 
-s='U(t).*exp(-t/2)/2';
-d='Exponential, slow';
-cFuncExpSlow={s d};
+cFunc(end+1).f='U(t) - 2*U(t-1) + U(t-2)';
+cFunc(end).n='BiPhasic (2 sec)';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t) - 2\gamma(t-1) + \gamma(t-2)$';
 
-s='U(t).*exp(-2*t)*2';
-d='Exponential, fast';
-cFuncExpFast={s d};
 
-s='U(t).*exp(-10*t)*10';
-d='Exponential, very fast';
-cFuncExpVFast={s d};
 
-s='U(t)-U(t-1)';
-d='Pulse (1 sec)';
-cFuncPulse1={s d};
+cFunc(end+1).f='U(t).*exp(-t/2)/2';
+cFunc(end).n='Exponential, slow';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t)e^{-\frac{t}{2}}/2$';
 
-s='sin(20*t)./t/20';
-d='Narrow Sinc';
-cFuncNarrowSinc={s d};
+cFunc(end+1).f='U(t).*exp(-2*t)*2';
+cFunc(end).n='Exponential, fast';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t)2e^{-2t}$';
 
-s='sin(5*t)./t/5';
-d='Wide Sinc';
-cFuncWideSinc={s d};
+cFunc(end+1).f='U(t).*exp(-10*t)*10';
+cFunc(end).n='Exponential, very fast';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t)10e^{-10t}$';
+
+cFunc(end+1).f='0.*U(t)';  % Must be function of t so it is not zero length
+cFunc(end).n='Impulse (t=0)';  % impulse
+cFunc(end).d=[2 0]; % dwindling impulses
+cFunc(end).s='$2\delta(t)$';
+
+cFunc(end+1).f='0.*U(t)';  % Must be function of t so it is not zero length
+cFunc(end).n='Impulse (t=2.5)';  % Delayed impulse
+cFunc(end).d=[-1 2.5]; % dwindling impulses
+cFunc(end).s='$-\delta(t)$';
+cFunc(end+1).f='-2*exp(-2*t).*U(t)';
+cFunc(end).n='High Pass';
+cFunc(end).d=[1 0];
+cFunc(end).s='$\delta(t)-2exp^{-2*t}$';
+
+cFunc(end+1).f='0.*U(t)';  % Must be function of t so it is not zero length
+cFunc(end).n='Echo';
+cFunc(end).d=[1 0; 0.5 1]; % Unit impulse at 0, 0.5 impulse at t=1
+cFunc(end).s='$\delta(t)-\frac{1}{2}\delta(t-1)$';
+
+
+cFunc(end+1).f='0.*U(t)';  % Must be function of t so it is not zero length
+cFunc(end).n='Impulse Ramp';  % Approximation to ramp
+cFunc(end).d=[1 0; 0.8 0.2; 0.6 0.4; 0.4 0.6; 0.2 0.8]; % dwindling impulses
+cFunc(end).s='$\delta(t)-0.8\delta(t-0.2)-0.6\delta(t-0.4)-0.4\delta(t-0.6)-0.2\delta(t-0.8)$';
+
+
+cFunc(end+1).f='U(t).*exp(-0.5.*t).*sin(sqrt(3/4)*t)/sqrt(3/4)';
+cFunc(end).n='Damped Sinusoid';
+cFunc(end).d=[];
+cFunc(end).s='$\gamma(t)\sqrt{\frac{4}{3}}e^{-\frac{t}{2}}sin(\sqrt{\frac{3}{4}}t)$';
+
+cFunc(end+1).f='(sin(t).*t+1).*(U(t)-U(t-4))';
+cFunc(end).n='Oddball function';
+cFunc(end).d=[];
+cFunc(end).s='$(tsin(t)+1)(\gamma(t)-\gamma(t-4))$';
+
+cFunc(end+1).f='sin(20*t)./t/20';
+cFunc(end).n='Narrow Sinc';
+cFunc(end).d=[];
+cFunc(end).s='$\frac{sin(20t)}{20t}$';
+
+cFunc(end+1).f='sin(5*t)./t/5';
+cFunc(end).n='Wide Sinc';
+cFunc(end).d=[];
+cFunc(end).s='$\frac{sin(5t)}{5t}$';
+
+
+
+
 
 
 %% The following lines are useful for debugging.
 % tmin=-4;  tmax=5;
-% t=tmin:((tmax-tmin)/1000):tmax;
+% t=linspace(tmin,tmax,500);
 % s
 % plot(t,eval(s));
 
-save 'ConvolveFuncs' cFunc*
-
+save 'ConvFuncs' cFunc
 
 
 function u=U(t)
