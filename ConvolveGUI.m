@@ -1,28 +1,8 @@
 function varargout = ConvolveGUI(varargin)
 % CONVOLVEGUI_FIG M-file for ConvolveGUI_fig.fig
-%      CONVOLVEGUI_FIG, by itself, creates a new CONVOLVEGUI_FIG or raises the existing
-%      singleton*.
-%
-%      H = CONVOLVEGUI_FIG returns the handle to a new CONVOLVEGUI_FIG or the handle to
-%      the existing singleton*.
-%
-%      CONVOLVEGUI_FIG('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in CONVOLVEGUI_FIG.M with the given input arguments.
-%
-%      CONVOLVEGUI_FIG('Property','Value',...) creates a new CONVOLVEGUI_FIG or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before ConvolveGUI_fig_OpeningFunction gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to ConvolveGUI_fig_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help ConvolveGUI_fig
-
-% Last Modified by GUIDE v2.5 11-Jan-2012 13:06:09
+%      This .m file supplies the code for a tool that helps to visualize
+%      convolution of continuous time functions.  For details see:
+%      http://lpsa.swarthmore.edu/Convolution/ConvolveGUI.html
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -35,7 +15,6 @@ gui_State = struct('gui_Name',       mfilename, ...
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
-
 if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
@@ -82,11 +61,9 @@ handles.editFPS=5;                      handles.showLegend=1;
 handles.videoQ = 75;
 
 handles.tmin=0; handles.tmax=0;	handles.dt=0; 	handles.t=0;
-handles.f=0; 	handles.h=0;    % functions	
+handles.f=0; 	handles.h=0;    % functions
 handles.fd=0;   handles.hd=0;   % impulses in functions.
 handles.y=0;                    % convolution values in array
-
-
 
 axes(handles.hAxText);  axis off;   cla
 handles.hDispText = text(0,0.5,'.','HorizontalAlignment','left',...
@@ -107,7 +84,6 @@ guidata(hObject, handles);
 FuncCalc(handles);
 handles=guidata(hObject);
 FuncDisplay(handles);
-
 
 % --- Executes during object creation, after setting all properties.
 function ConvolveGUI_fig_CreateFcn(~, ~, ~) %#ok<*DEFNU>
@@ -187,7 +163,6 @@ FuncCalc(handles);
 handles=guidata(handles.ConvolveGUI_fig);
 FuncDisplay(handles);
 
-
 function FuncCalc(handles)
 handles.tmin=str2double(handles.TminText.String);
 handles.tmax=str2double(handles.TmaxText.String);
@@ -225,7 +200,6 @@ end
 handles.y=conv(fcnv,hcnv)*handles.dt;
 guidata(handles.ConvolveGUI_fig, handles);
 
-
 function FuncDisplay(handles)
 tmin=handles.tmin;
 tmax=handles.tmax;
@@ -234,7 +208,7 @@ t=handles.t;
 f=handles.f;        % Function f(t)
 fd=handles.fd;      % Impulses in f(t), nx2 array, [size, time]
 h=handles.h;        % Function h(t)
-hd=handles.hd;       
+hd=handles.hd;
 cord=handles.cord;
 %hIndex=handles.hPopup.Value;
 %hFuncStr=char(handles.cFunc(hIndex).f);
@@ -350,12 +324,12 @@ hold off
 
 if ~isempty(fd) && ~isempty(hd),  % If impulses in both f and h, fail
     s = {'You are trying to convolve two functions with impulses.'...
-         'This software cannot do that.' ' '...
-         'Note: there is no fundamental physical or mathematical'...
-         'difficulty involved in the convoloution of two functions'...
-         'with impulses, but this sofware is not able to perform'...
-         'the calculation, so the result is not shown.' ' '...
-         'Hit "OK" in warning dialog box to continue.'};
+        'This software cannot do that.' ' '...
+        'Note: there is no fundamental physical or mathematical'...
+        'difficulty involved in the convoloution of two functions'...
+        'with impulses, but this sofware is not able to perform'...
+        'the calculation, so the result is not shown.' ' '...
+        'Hit "OK" in warning dialog box to continue.'};
     warndlg(s,'Warning','modal');
     cla(handles.convolutionAxes);
     cla(handles.convolveAxes);
@@ -364,24 +338,28 @@ end
 
 % --- Executes on button press in AnimParamButton.
 function AnimParamButton_Callback(~, ~, handles)
-[v1, v2, v3, v4, v5, v6, v7, v8]=ConvolveAnimParam(...
-    handles.fileName,...
-    handles.filePath,...
-    handles.editNumFrames,...
-    handles.checkSaveFile,...
-    handles.animFileType,...
-    handles.checkShowLegend,...
-    handles.editFPS,...
-    handles.videoQ);
-handles.fileName=v1;
-handles.filePath=v2;
-handles.editNumFrames=v3;
-handles.checkSaveFile=v4;
-handles.animFileType=v5;
-handles.checkShowLegend=v6;
-handles.editFPS=v7;
-handles.videoQ=v8;
-guidata(handles.ConvolveGUI_fig, handles);
+try
+    %pass variables to, and retrieve variables from, ConvolveAnimParam
+    [handles.fileName,...
+        handles.filePath,...
+        handles.editNumFrames,...
+        handles.checkSaveFile,...
+        handles.animFileType,...
+        handles.checkShowLegend,...
+        handles.editFPS,...
+        handles.videoQ] = ConvolveAnimParam(handles.fileName,...
+        handles.filePath,...
+        handles.editNumFrames,...
+        handles.checkSaveFile,...
+        handles.animFileType,...
+        handles.checkShowLegend,...
+        handles.editFPS,...
+        handles.videoQ);
+    guidata(handles.ConvolveGUI_fig, handles);
+catch
+    beep; disp('No animation parameters set.');
+end
+
 
 
 % --- Executes on button press in pushAnimate.
@@ -421,11 +399,10 @@ if (handles.checkSaveFile==1),
             if strcmp(myFname(end-3:end),'.avi'),
                 wObj = VideoWriter(myFname);            % .avi by default
             else
-                 wObj = VideoWriter(myFname,'MPEG-4');  % change to .mp4
+                wObj = VideoWriter(myFname,'MPEG-4');  % change to .mp4
             end
             wObj.FrameRate = handles.editFPS;
             wObj.Quality = handles.videoQ;
-
             open(wObj);
             for frmNum=1:numFrms,
                 waitbar(numFrms/frmNum,h,'writing');
@@ -433,15 +410,11 @@ if (handles.checkSaveFile==1),
             end
             close(wObj);
         otherwise
-            save(myFname,'myMovie');
+            save(myFname,'myMovie');  % This should never happen
     end
     waitbar(1,h,'done');
     delete(h);
 end
-
-function x=U(t)
-x=(t>=0)*1.0;
-
 
 % --- Executes on button press in showHideToggle.
 function showHideToggle_Callback(~, ~, handles)
@@ -455,12 +428,16 @@ FuncDisplay(handles)
 
 function plotImp(d,ls,lw,c)
 for i=1:size(d,1),  %Display impulses(t)
-    plot([d(i,2) d(i,2)],[0 d(i,1)],ls,'LineWidth',lw,'Color',c); 
+    % plot vertical line of ith impulse using specified amplitude and time.
+    plot([d(i,2) d(i,2)],[0 d(i,1)],ls,'LineWidth',lw,'Color',c);
     if d(i,1)<0
-        m='v';
+        m='v';  % if impulse has negative amplitude, downward arrow
     else
-        m='^';
+        m='^';  % else, upward arrow.
     end
     s=plot(d(i,2), d(i,1), m, 'Color',c, 'MarkerFaceColor', c);
     if lw>2, s.MarkerSize=s.MarkerSize*1.5; end;
 end
+
+function x=U(t)
+x=(t>=0)*1.0;

@@ -1,9 +1,10 @@
 function ConvolveFuncs
+% This function defines functions used in the file ConvolveGUI.m
+
 cFunc(1).f='U(t)';          % Function to be executed
 cFunc(end).d=[];            % Impulse nx2 (time, height) (see examples below)   
 cFunc(end).n='Unit Step';   % String for drop down menu
 cFunc(end).s='$\gamma(t)$'; % TeX string to be displayed.
-
 
 cFunc(end+1).f='U(t)-U(t-2)';
 cFunc(end).n='Pulse (2 sec)';
@@ -116,15 +117,4 @@ cFunc(end).n='Wide Sinc';
 cFunc(end).d=[];
 cFunc(end).s='$\frac{sin(5t)}{5t}$';
 
-
-%% The following lines are useful for debugging.
-% tmin=-4;  tmax=5;
-% t=linspace(tmin,tmax,500);
-% s
-% plot(t,eval(s));
-
-save 'ConvFuncs' cFunc
-
-
-function u=U(t)
-u=t>0;
+save 'ConvFuncs' cFunc  % Save the functions

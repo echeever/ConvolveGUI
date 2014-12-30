@@ -1,28 +1,6 @@
 function varargout = ConvolveAnimParam(varargin)
 % CONVOLVEANIMPARAM M-file for ConvolveAnimParam.fig
-%      CONVOLVEANIMPARAM, by itself, creates a new CONVOLVEANIMPARAM or raises the existing
-%      singleton*.
-%
-%      H = CONVOLVEANIMPARAM returns the handle to a new CONVOLVEANIMPARAM or the handle to
-%      the existing singleton*.
-%
-%      CONVOLVEANIMPARAM('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in CONVOLVEANIMPARAM.M with the given input arguments.
-%
-%      CONVOLVEANIMPARAM('Property','Value',...) creates a new CONVOLVEANIMPARAM or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before ConvolveAnimParam_OpeningFunction gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to ConvolveAnimParam_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help ConvolveAnimParam
-
-% Last Modified by GUIDE v2.5 30-Dec-2014 12:14:59
+%      Helper function for ConvolveGUI.m
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -88,7 +66,7 @@ uiwait(handles.ConvolveAnimParamDlg);
 
 % --- Outputs from this function are returned to the command line.
 function varargout = ConvolveAnimParam_OutputFcn(~, ~, handles)
-% myFName=handles.textFileName.String;
+varargout{1}=handles.textFileName.String;
 varargout{2}=handles.filePath;
 varargout{3}=str2double(handles.editNumFrames.String);
 varargout{4}=handles.checkSaveFile.Value;
@@ -108,35 +86,6 @@ varargout{6}=handles.checkShowLegend.Value;
 varargout{7}=str2double(handles.editFPS.String);
 varargout{8}=str2double(handles.editVideoQ.String);
 
-%[pNm, fNm, ~] = fileparts(myFName);
-% if (strcmp(ext,'')),
-%     switch movieType,
-%         case 1
-%             myFName = fullfile(pNm, fNm, [fNm '.mat']);
-%         case 2
-%             myFName = fullfile(pNm, fNm, [fNm '.avi']);
-%         case 3
-%             myFName = fullfile(pNm, fNm, [fNm '.mp4']);
-%         otherwise
-%             beep;
-%             disp('Warning 2, unknown file type, ConvolveAnimParam_OutputFcn');
-%             % movieType=1;
-%     end
-% end
-%     switch movieType,
-%         case 1
-%             ext='.mat';
-%         case 2
-%             ext='.avi';
-%         case 3
-%             ext='.mp4';
-%         otherwise
-%             beep;
-%             disp('Warning 2, unknown file type, ConvolveAnimParam_OutputFcn');
-%             ext = '.junk'
-%     end
-
-varargout{1}=handles.textFileName.String;
 
 delete(handles.ConvolveAnimParamDlg);
 
