@@ -201,6 +201,7 @@ handles.y=conv(fcnv,hcnv)*handles.dt;
 guidata(handles.ConvolveGUI_fig, handles);
 
 function FuncDisplay(handles)
+%% Initialize Variables
 tmin=handles.tmin;
 tmax=handles.tmax;
 dt=handles.dt;
@@ -214,7 +215,7 @@ cord=handles.cord;
 %hFuncStr=char(handles.cFunc(hIndex).f);
 y=handles.y;
 
-%Display f(t) and h(t) on one set of axes.
+%% Display f(t) and h(t) on one set of axes.
 axes(handles.funcAxes);
 cla
 plot([tmin tmax],[0 0],'Color',0.75*[1 1 1],'LineStyle',':');
@@ -238,13 +239,13 @@ xlabel('Time');
 ylabel('Function');
 title('f(t) and h(t) vs. time');
 
-%Display convolution on one set of axes.
+%% Display convolution on one set of axes.
 axes(handles.convolutionAxes);
 plot([tmin tmax],[0 0],'Color',0.75*[1 1 1],'LineStyle',':');
 tc=2*tmin+dt*(0:(length(y)-1));     %calculate time vector for convolved sequence.
 hold on;
 
-%Get current value of time (from slider) and plot it along with convolution.
+%% Get current value of time (from slider) and plot it along with convolution.
 timeVal=handles.TimeSlider.Value;
 TimeIndex=find(timeVal>tc,1,'last');
 plot(tc(TimeIndex),y(TimeIndex),'ko','MarkerFaceColor','k');
@@ -262,6 +263,7 @@ if handles.showHideToggle.Value,
 else
     plot(tc,y,'Color',cord(5,:),'LineWidth',2); %Plot all of  sequence.
 end
+
 ymin=min(y); %Set y axes to be slightly bigger than the functions.
 ymax=max(y);
 ylower=ymin-0.05*(ymax-ymin);
@@ -276,7 +278,7 @@ if (handles.showLegend==1),
 end
 hold off
 
-%Display f(lamb) and h(t-lamb) on one set of axes.
+%% Display f(lamb) and h(t-lamb) on one set of axes.
 lam=t;
 flam = f(lam);
 htlam = h(timeVal-lam);
@@ -302,18 +304,20 @@ end
 
 % If there are impulses in f(t), plot them and plot impulses in product
 if ~isempty(fd)
-    plotImp(fd,'-.',2,cord(1,:));
     plotImp([fd(:,1).*h(timeVal-fd(:,2))  fd(:,2)],'-',3,cord(3,:));
+    plotImp(fd,'-.',2,cord(1,:));
 end
 if ~isempty(hd)
-    plotImp([hd(:,1) timeVal-hd(:,2)],':',2,cord(2,:));
     plotImp([hd(:,1).*f(timeVal-hd(:,2)) timeVal-hd(:,2)],'-',3,cord(3,:));
+    plotImp([hd(:,1) timeVal-hd(:,2)],':',2,cord(2,:));
 end
-
+plot(tc(TimeIndex),0,'ko','MarkerFaceColor','k');  % Replot so it is more
+% visible.
 
 %Set axes so that y axes are slightly bigger than the functions.
 ymin=min([flam htlam fh min(fd:1) min(hd:1)]);
 ymax=max([flam htlam fh max(fd:1) max(hd:1)]);
+ylims=get(gca,'YLim');  ymin=ylims(1);  ymax=ylims(2);
 ylower=ymin-0.05*(ymax-ymin);
 yupper=ymax+0.05*(ymax-ymin);
 axis([tmin tmax ylower yupper]);
@@ -336,7 +340,7 @@ if ~isempty(fd) && ~isempty(hd),  % If impulses in both f and h, fail
 end
 
 
-% --- Executes on button press in AnimParamButton.
+%% --- Executes on button press in AnimParamButton.
 function AnimParamButton_Callback(~, ~, handles)
 try
     %pass variables to, and retrieve variables from, ConvolveAnimParam
@@ -424,7 +428,7 @@ if handles.showHideToggle.Value,
 else
     handles.showHideToggle.String='Hide Result';
 end
-FuncDisplay(handles)
+FuncDisplay(handles);
 
 function plotImp(d,ls,lw,c)
 for i=1:size(d,1),  %Display impulses(t)
