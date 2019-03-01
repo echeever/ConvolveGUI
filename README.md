@@ -11,3 +11,5 @@ All of these files must be on your MATLAB path.
 More information is available at: http://lpsa.swarthmore.edu/Convolution/ConvolveGUI.html
 
 This script requires MATLAB 2014b or later.
+
+A new JavaScript version is available at: http://lpsa.swarthmore.edu/Convolution/CI.html that doesn't require MATLAB.
